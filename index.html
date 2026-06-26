@@ -549,6 +549,21 @@
       a.href=URL.createObjectURL(blob);a.download='学习记录_'+new Date().toISOString().slice(0,10)+'.txt';a.click();URL.revokeObjectURL(a.href);
     }
 
+    
+    // ====== 版本检查 ======
+    var APP_VER = "2";
+    var savedVer = localStorage.getItem('appVersion');
+    if (savedVer && savedVer !== APP_VER) {
+      // 新版上线，清除旧缓存
+      if ('serviceWorker' in navigator) {
+        caches.keys().then(function(ks) { ks.forEach(function(k) { caches.delete(k); }); });
+      }
+      localStorage.setItem('appVersion', APP_VER);
+      location.reload(true);
+    } else if (!savedVer) {
+      localStorage.setItem('appVersion', APP_VER);
+    }
+
     // ====== Service Worker ======
     if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 
