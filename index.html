@@ -169,8 +169,8 @@
         <div class="status-badge status-idle" id="statusBadge">⏸ 未开始</div>
         <div class="timer-display" id="timerDisplay">00:00:00</div>
         <div class="timer-controls">
-          <button class="btn btn-start" id="startBtn">▶ 开始学习</button>
-          <button class="btn btn-stop" id="stopBtn" disabled>⏹ 结束学习</button>
+          <button class="btn btn-start" id="startBtn" onclick="handleStart()">▶ 开始学习</button>
+          <button class="btn btn-stop" id="stopBtn" disabled onclick="handleStop()">⏹ 结束学习</button>
         </div>
         <div class="motivation-msg" id="motivationMsg"></div>
         <div class="stats">
@@ -231,7 +231,7 @@
   </div>
 
   <!-- Shop Modal -->
-  <div class="modal-overlay" id="shopModal">
+  <div class="modal-overlay" id="shopModal" onclick="if(event.target===this)closeShop()">
     <div class="modal">
       <h3>🎀 宠物商店</h3>
       <div style="margin-bottom:12px;display:flex;gap:8px;">
@@ -246,10 +246,10 @@
   </div>
 
   <!-- Edit Modal -->
-  <div class="modal-overlay" id="editModal">
+  <div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
     <div class="modal">
       <h3>✏️ 编辑时长</h3>
-      <input type="number" id="editMinutes" placeholder="分钟数" min="1" />
+      <input type="number" id="editMinutes" placeholder="分钟数" min="1" onkeydown="if(event.key==='Enter')confirmEdit()" />
       <div class="modal-actions">
         <button class="btn btn-secondary btn-small" onclick="closeEditModal()">取消</button>
         <button class="btn btn-start btn-small" onclick="confirmEdit()">保存</button>
@@ -294,6 +294,31 @@
     // ====== 状态 ======
     var state = { studying: false, startTime: null, timerInterval: null };
     var editingIndex = null;
+
+    function handleStart(){if(state.studying)return;state.studying=true;state.startTime=new Date();
+      document.getElementById('startBtn').disabled=true;document.getElementById('stopBtn').disabled=false;
+      document.getElementById('statusBadge').textContent='📖 学习中...';
+      document.getElementById('statusBadge').className='status-badge status-studying';
+      showMsg('motivationMsg',startMsgs,'start');
+      requestWakeLock().then(function(has){if(has)document.getElementById('statusBadge').textContent='📖 学习中 (屏幕常亮)';});
+      state.timerInterval=setInterval(function(){
+        var e=Math.floor((new Date()-state.startTime)/1000);
+        document.getElementById('timerDisplay').textContent=fmt(e);
+      },1000);
+    }
+    function handleStop(){if(!state.studying)return;state.studying=false;
+      var end=new Date(),dur=Math.floor((end-state.startTime)/1000);
+      clearInterval(state.timerInterval);state.timerInterval=null;releaseWakeLock();
+      document.getElementById('startBtn').disabled=false;document.getElementById('stopBtn').disabled=true;
+      document.getElementById('statusBadge').textContent='⏸ 未开始';
+      document.getElementById('statusBadge').className='status-badge status-idle';
+      showMsg('motivationMsg',stopMsgs,'stop');
+      var s=loadSessions();s.push({start:state.startTime.toISOString(),end:end.toISOString(),duration:dur});
+      saveSessions(s);
+      var pet=loadPet();var coins=Math.floor(dur/60);if(coins>0){pet.coins+=coins;savePet(pet);}
+      state.startTime=null;document.getElementById('timerDisplay').textContent='00:00:00';
+      refreshUI();
+    }
     var wakeLock = null;
     var shopTab = "pets";
     var calDate = new Date();
@@ -501,45 +526,19 @@
     function showMsg(elId,msgs,type){var msg=msgs[Math.floor(Math.random()*msgs.length)],el=document.getElementById(elId);el.textContent=msg;el.className='motivation-msg show '+type;setTimeout(function(){el.classList.remove('show');},3000);}
 
     // ====== 计时器 ======
-    document.getElementById('startBtn').addEventListener('click',async function(){
-      if(state.studying)return;state.studying=true;state.startTime=new Date();
-      document.getElementById('startBtn').disabled=true;document.getElementById('stopBtn').disabled=false;
-      document.getElementById('statusBadge').textContent='📖 学习中...';
-      document.getElementById('statusBadge').className='status-badge status-studying';
-      showMsg('motivationMsg',startMsgs,'start');
-      var has=await requestWakeLock();if(has)document.getElementById('statusBadge').textContent='📖 学习中 (屏幕常亮)';
-      state.timerInterval=setInterval(function(){
-        var e=Math.floor((new Date()-state.startTime)/1000);
-        document.getElementById('timerDisplay').textContent=fmt(e);
-      },1000);
-    });
+    
 
-    document.getElementById('stopBtn').addEventListener('click',function(){
-      if(!state.studying)return;state.studying=false;
-      var end=new Date(),dur=Math.floor((end-state.startTime)/1000);
-      clearInterval(state.timerInterval);state.timerInterval=null;releaseWakeLock();
-      document.getElementById('startBtn').disabled=false;document.getElementById('stopBtn').disabled=true;
-      document.getElementById('statusBadge').textContent='⏸ 未开始';
-      document.getElementById('statusBadge').className='status-badge status-idle';
-      showMsg('motivationMsg',stopMsgs,'stop');
-      var s=loadSessions();s.push({start:state.startTime.toISOString(),end:end.toISOString(),duration:dur});
-      saveSessions(s);
-
-      // 金币奖励：学习 1 分钟 = 1 金币
-      var pet=loadPet();var coins=Math.floor(dur/60);if(coins>0){pet.coins+=coins;savePet(pet);}
-      state.startTime=null;document.getElementById('timerDisplay').textContent='00:00:00';
-      refreshUI();switchTab('timer');
-    });
+    
 
     // ====== 编辑 ======
     function deleteSession(i){if(!confirm('确定删除？'))return;var s=loadSessions();s.splice(i,1);saveSessions(s);refreshUI();}
     function openEditModal(i){editingIndex=i;var s=loadSessions();document.getElementById('editMinutes').value=Math.round((s[i].duration||0)/60)||'';document.getElementById('editModal').classList.add('active');setTimeout(function(){document.getElementById('editMinutes').focus();},100);}
     function closeEditModal(){editingIndex=null;document.getElementById('editModal').classList.remove('active');}
     function confirmEdit(){var m=parseInt(document.getElementById('editMinutes').value);if(isNaN(m)||m<1){alert('请输入有效分钟数');return;}var s=loadSessions();s[editingIndex].duration=m*60;saveSessions(s);closeEditModal();refreshUI();}
-    document.getElementById('editModal').addEventListener('click',function(e){if(e.target===document.getElementById('editModal'))closeEditModal();});
-    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeEditModal();});
-    document.getElementById('editMinutes').addEventListener('keydown',function(e){if(e.key==='Enter')confirmEdit();});
-    document.getElementById('shopModal').addEventListener('click',function(e){if(e.target===document.getElementById('shopModal'))closeShop();});
+    
+    document.onkeydown=function(e){if(e.key==='Escape')closeEditModal();};
+    
+    
 
     // ====== 导出 ======
     function exportData(){
