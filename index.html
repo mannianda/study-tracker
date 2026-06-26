@@ -15,179 +15,239 @@
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh; min-height: 100dvh;
-      padding: 16px;
+      padding: 12px;
       color: #333;
       overscroll-behavior: none;
     }
     .container { max-width: 700px; margin: 0 auto; }
-    h1 { text-align: center; font-size: 26px; margin-bottom: 20px; color: #2c3e50; }
 
-    .timer-card {
-      background: white; border-radius: 16px; padding: 28px 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.08); text-align: center; margin-bottom: 16px;
+    /* ====== Tabs ====== */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn {
+      flex: 1; padding: 12px; font-size: 15px; font-weight: 600;
+      border: none; border-radius: 12px; cursor: pointer;
+      background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
+      transition: all 0.2s; touch-action: manipulation;
     }
+    .tab-btn.active { background: white; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ====== Card ====== */
+    .card {
+      background: white; border-radius: 16px; padding: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08); margin-bottom: 16px;
+    }
+
+    /* ====== Timer ====== */
+    .timer-card { text-align: center; }
     .timer-display {
       font-size: 56px; font-weight: 700; font-variant-numeric: tabular-nums;
       color: #2c3e50; margin: 12px 0; letter-spacing: 2px;
       font-family: "SF Mono", "Cascadia Code", "Consolas", monospace;
     }
     .timer-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-
     .btn {
       padding: 14px 28px; font-size: 16px; font-weight: 600;
       border: none; border-radius: 50px; cursor: pointer;
       transition: transform 0.15s; min-width: 130px;
-      touch-action: manipulation;
-      user-select: none;
+      touch-action: manipulation; user-select: none;
     }
     .btn:active { transform: scale(0.95); }
     .btn-start { background: #2ecc71; color: white; }
     .btn-stop { background: #e74c3c; color: white; }
     .btn-stop:disabled { background: #bdc3c7; cursor: not-allowed; }
-    .btn-edit { background: #f39c12; color: white; }
     .btn-secondary { background: #ecf0f1; color: #333; }
     .btn-small { padding: 8px 14px; font-size: 13px; min-width: auto; }
-    .btn-danger-outline {
-      background: none; border: 1px solid #e74c3c; color: #e74c3c;
-      padding: 8px 14px; font-size: 13px; border-radius: 50px; cursor: pointer;
-    }
-
-    .stats {
-      display: flex; gap: 12px; justify-content: center; margin-top: 20px;
-    }
-    .stat-item {
-      background: #f8f9fa; border-radius: 12px; padding: 10px 16px;
-      flex: 1; max-width: 160px;
-    }
+    .btn-gold { background: #f39c12; color: white; }
+    .btn-pink { background: #e84393; color: white; }
+    .btn-blue { background: #0984e3; color: white; }
+    .stats { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+    .stat-item { background: #f8f9fa; border-radius: 12px; padding: 10px 16px; flex: 1; max-width: 160px; }
     .stat-label { font-size: 12px; color: #7f8c8d; }
     .stat-value { font-size: 20px; font-weight: 700; color: #2c3e50; }
-
-    .history-card {
-      background: white; border-radius: 16px; padding: 20px;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
-    }
-    .history-header {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 12px; flex-wrap: wrap; gap: 8px;
-    }
-    .history-header h2 { font-size: 18px; color: #2c3e50; }
-    .history-actions { display: flex; gap: 8px; }
-    .empty-msg { text-align: center; color: #95a5a6; padding: 32px 0; font-size: 14px; }
-
-    .session-item {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 14px 0; border-bottom: 1px solid #f0f0f0; gap: 8px;
-    }
-    .session-item:last-child { border-bottom: none; }
-    .session-date { font-size: 13px; color: #7f8c8d; }
-    .session-duration { font-weight: 600; color: #2c3e50; white-space: nowrap; }
-    .session-actions { display: flex; gap: 6px; }
-    .icon-btn {
-      background: none; border: none; cursor: pointer;
-      font-size: 16px; padding: 6px 8px; border-radius: 8px;
-      transition: background 0.2s; touch-action: manipulation;
-    }
-    .icon-btn:hover { background: #f0f0f0; }
-    .icon-btn-danger { color: #e74c3c; }
-    .icon-btn-danger:hover { background: #fde8e8; }
-
-    .status-badge {
-      display: inline-block; padding: 4px 14px; border-radius: 20px;
-      font-size: 13px; font-weight: 600; margin-top: 8px;
-    }
+    .status-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 8px; }
     .status-studying { background: #d5f5e3; color: #1e8449; }
     .status-idle { background: #f0f0f0; color: #7f8c8d; }
-    .motivation-msg {
-      margin-top: 12px; font-size: 15px; font-weight: 600;
-      min-height: 24px; transition: opacity 0.3s;
-      opacity: 0;
-    }
+    .motivation-msg { margin-top: 12px; font-size: 15px; font-weight: 600; min-height: 24px; transition: opacity 0.3s; opacity: 0; }
     .motivation-msg.show { opacity: 1; }
     .motivation-msg.start { color: #2ecc71; }
     .motivation-msg.stop { color: #e74c3c; }
-    .status-wake-lock { background: #fef9e7; color: #7d6608; }
 
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4);
-      align-items: center; justify-content: center; z-index: 100;
-      padding: 16px;
+    /* ====== Calendar ====== */
+    .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .cal-nav .month { font-size: 16px; font-weight: 700; color: #2c3e50; }
+    .cal-nav button { background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px 12px; color: #666; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .cal-header { font-size: 12px; color: #999; padding: 4px 0; font-weight: 600; }
+    .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; font-size: 13px; position: relative; }
+    .cal-day.other-month { color: #ddd; }
+    .cal-day.today { background: #e8f4fd; font-weight: 700; }
+    .cal-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 2px; }
+    .cal-dot.studied { background: #2ecc71; }
+    .cal-dot.missed { background: #e74c3c; }
+    .cal-legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 12px; color: #666; }
+    .cal-legend span { display: flex; align-items: center; gap: 4px; }
+    .cal-summary { text-align: center; margin-top: 12px; font-size: 14px; color: #555; }
+
+    /* ====== Pet ====== */
+    .pet-area { text-align: center; position: relative; padding: 10px 0; }
+    .pet-emoji { font-size: 80px; line-height: 1; transition: transform 0.3s; display: inline-block; }
+    .pet-emoji.bounce { animation: petBounce 0.5s; }
+    .pet-emoji.idle { animation: petFloat 3s ease-in-out infinite; }
+    @keyframes petBounce { 0%,100% { transform: translateY(0); } 30% { transform: translateY(-20px); } 50% { transform: translateY(-25px); } 70% { transform: translateY(-10px); } }
+    @keyframes petFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .pet-accessory { font-size: 28px; position: absolute; top: 5px; }
+    .pet-name { font-size: 16px; font-weight: 700; color: #2c3e50; margin-top: 4px; }
+    .pet-stage { font-size: 12px; color: #999; }
+    .pet-bar-wrap { background: #f0f0f0; border-radius: 10px; height: 8px; margin: 8px 20px; overflow: hidden; }
+    .pet-bar { height: 100%; border-radius: 10px; transition: width 0.5s; background: linear-gradient(90deg, #fdcb6e, #e17055); }
+    .pet-coins { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 18px; font-weight: 700; color: #f39c12; margin: 8px 0; }
+    .pet-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+    /* ====== Shop ====== */
+    .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .shop-item {
+      background: #f8f9fa; border: 2px solid transparent; border-radius: 12px;
+      padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.2s;
     }
+    .shop-item:hover { border-color: #ddd; }
+    .shop-item.owned { border-color: #2ecc71; background: #f0fff4; }
+    .shop-item.selected { border-color: #0984e3; background: #e8f4fd; }
+    .shop-item .emoji { font-size: 36px; display: block; }
+    .shop-item .name { font-size: 12px; font-weight: 600; color: #333; margin-top: 4px; }
+    .shop-item .price { font-size: 11px; color: #f39c12; margin-top: 2px; }
+    .shop-item .badge { font-size: 10px; padding: 2px 6px; border-radius: 8px; margin-top: 4px; display: inline-block; }
+    .badge-owned { background: #2ecc71; color: white; }
+    .badge-selected { background: #0984e3; color: white; }
+    .badge-locked { background: #ddd; color: #999; }
+
+    /* ====== History ====== */
+    .history-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .history-header h2 { font-size: 16px; color: #2c3e50; }
+    .session-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; gap: 8px; }
+    .session-item:last-child { border-bottom: none; }
+    .session-date { font-size: 13px; color: #7f8c8d; }
+    .session-duration { font-weight: 600; color: #2c3e50; font-size: 13px; }
+    .empty-msg { text-align: center; color: #95a5a6; padding: 24px 0; font-size: 14px; }
+
+    /* ====== Modal ====== */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 100; padding: 16px; }
     .modal-overlay.active { display: flex; }
-    .modal {
-      background: white; border-radius: 16px; padding: 24px; width: 100%;
-      max-width: 360px; box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    }
+    .modal { background: white; border-radius: 16px; padding: 24px; width: 100%; max-width: 360px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
     .modal h3 { margin-bottom: 16px; color: #2c3e50; font-size: 18px; }
-    .modal input {
-      width: 100%; padding: 12px 14px; font-size: 16px;
-      border: 1px solid #ddd; border-radius: 10px; margin-bottom: 16px;
-      outline: none;
-    }
+    .modal input { width: 100%; padding: 12px 14px; font-size: 16px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 16px; outline: none; }
     .modal input:focus { border-color: #3498db; }
     .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
     @media (max-width: 480px) {
-      body { padding: 12px; }
-      h1 { font-size: 22px; }
-      .timer-card { padding: 20px 16px; }
-      .timer-display { font-size: 44px; }
-      .btn { padding: 12px 20px; font-size: 15px; min-width: 100px; }
-      .stats { gap: 8px; }
-      .stat-item { padding: 8px 12px; }
-      .stat-value { font-size: 17px; }
-      .session-item { flex-wrap: wrap; }
+      body { padding: 8px; }
+      .timer-display { font-size: 40px; }
+      .btn { padding: 12px 20px; font-size: 14px; min-width: 100px; }
+      .pet-emoji { font-size: 64px; }
+      .shop-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📚 学习计时器</h1>
+    <h1 style="color:white;text-align:center;font-size:22px;margin-bottom:16px;">📚 学习计时器</h1>
 
-    <div class="timer-card">
-      <div class="timer-display" id="timerDisplay">00:00:00</div>
-      <div id="statusBadge" class="status-badge status-idle">⏸ 未开始</div>
-      <div id="motivationMsg" class="motivation-msg"></div>
-      <div style="margin-top:16px;">
-        <button class="btn btn-start" id="startBtn">▶ 开始学习</button>
-        <button class="btn btn-stop" id="stopBtn" disabled>⏹ 结束学习</button>
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('timer')">⏱ 学习</button>
+      <button class="tab-btn" onclick="switchTab('pet')">🐾 宠物</button>
+    </div>
+
+    <!-- Tab: Timer -->
+    <div class="tab-content active" id="tabTimer">
+      <div class="card timer-card">
+        <div class="status-badge status-idle" id="statusBadge">⏸ 未开始</div>
+        <div class="timer-display" id="timerDisplay">00:00:00</div>
+        <div class="timer-controls">
+          <button class="btn btn-start" id="startBtn">▶ 开始学习</button>
+          <button class="btn btn-stop" id="stopBtn" disabled>⏹ 结束学习</button>
+        </div>
+        <div class="motivation-msg" id="motivationMsg"></div>
+        <div class="stats">
+          <div class="stat-item"><div class="stat-label">今日次数</div><div class="stat-value" id="todayCount">0</div></div>
+          <div class="stat-item"><div class="stat-label">今日时长</div><div class="stat-value" id="todayDuration">00:00</div></div>
+          <div class="stat-item"><div class="stat-label">总计次数</div><div class="stat-value" id="totalCount">0</div></div>
+        </div>
       </div>
-      <div class="stats">
-        <div class="stat-item">
-          <div class="stat-label">今日次数</div>
-          <div class="stat-value" id="todayCount">0</div>
+
+      <!-- Calendar -->
+      <div class="card">
+        <div class="cal-nav">
+          <button onclick="calPrev()">◀</button>
+          <span class="month" id="calMonth"></span>
+          <button onclick="calNext()">▶</button>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">今日时长</div>
-          <div class="stat-value" id="todayDuration">00:00</div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend">
+          <span><span class="cal-dot studied"></span> 已学习</span>
+          <span><span class="cal-dot missed"></span> 未学习</span>
         </div>
-        <div class="stat-item">
-          <div class="stat-label">总计次数</div>
-          <div class="stat-value" id="totalCount">0</div>
+        <div class="cal-summary" id="calSummary"></div>
+      </div>
+
+      <!-- History -->
+      <div class="card">
+        <div class="history-header">
+          <h2>📋 学习记录</h2>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-secondary btn-small" onclick="exportData()">📤 导出</button>
+            <button class="btn btn-secondary btn-small" onclick="if(confirm('确定清空所有记录吗？')){localStorage.removeItem('studySessions');refreshUI();}">🗑 清空</button>
+          </div>
         </div>
+        <div id="historyList"><div class="empty-msg">还没有学习记录，快开始学习吧！🎯</div></div>
       </div>
     </div>
 
-    <div class="history-card">
-      <div class="history-header">
-        <h2>📋 学习记录</h2>
-        <div class="history-actions">
-          <button class="btn btn-secondary btn-small" onclick="exportData()">📤 导出</button>
-          <button class="btn btn-secondary btn-small" onclick="if(confirm('确定要清空所有记录吗？')){localStorage.removeItem('studySessions');refreshUI();}">🗑 清空</button>
+    <!-- Tab: Pet -->
+    <div class="tab-content" id="tabPet">
+      <div class="card pet-area">
+        <div class="pet-emoji idle" id="petEmoji">🐱</div>
+        <div class="pet-name" id="petName">小猫咪</div>
+        <div class="pet-stage" id="petStage">🐣 幼崽期</div>
+        <div class="pet-bar-wrap"><div class="pet-bar" id="petBar" style="width:0%"></div></div>
+        <div class="pet-coins" id="petCoins">🪙 0</div>
+        <div class="pet-actions">
+          <button class="btn btn-gold btn-small" onclick="feedPet()">🍼 喂养 (+10XP)</button>
+          <button class="btn btn-pink btn-small" onclick="openShop()">🎀 商店</button>
         </div>
+        <div id="petStatus" style="font-size:13px;color:#999;margin-top:8px;min-height:20px;"></div>
       </div>
-      <div id="historyList">
-        <div class="empty-msg">还没有学习记录，快开始学习吧！🎯</div>
+
+      <div class="card" style="text-align:center;">
+        <div style="font-size:14px;color:#666;margin-bottom:8px;">💡 学习 1 分钟 = 🪙 1 金币</div>
+        <div style="font-size:13px;color:#999;">喂养宠物让它长大，攒金币买新皮肤！</div>
       </div>
     </div>
   </div>
 
-  <!-- 编辑弹窗 -->
+  <!-- Shop Modal -->
+  <div class="modal-overlay" id="shopModal">
+    <div class="modal">
+      <h3>🎀 宠物商店</h3>
+      <div style="margin-bottom:12px;display:flex;gap:8px;">
+        <button class="btn btn-small btn-secondary" onclick="shopTab='pets';renderShop()">🐾 宠物</button>
+        <button class="btn btn-small btn-secondary" onclick="shopTab='skins';renderShop()">🎭 皮肤</button>
+      </div>
+      <div class="shop-grid" id="shopGrid"></div>
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn btn-secondary btn-small" onclick="closeShop()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal -->
   <div class="modal-overlay" id="editModal">
     <div class="modal">
-      <h3>✏️ 编辑学习时长</h3>
-      <input type="number" id="editMinutes" placeholder="输入分钟数" min="1" />
+      <h3>✏️ 编辑时长</h3>
+      <input type="number" id="editMinutes" placeholder="分钟数" min="1" />
       <div class="modal-actions">
         <button class="btn btn-secondary btn-small" onclick="closeEditModal()">取消</button>
         <button class="btn btn-start btn-small" onclick="confirmEdit()">保存</button>
@@ -196,227 +256,305 @@
   </div>
 
   <script>
-    // ====== 状态 ======
-    const STORAGE_KEY = 'studySessions';
-    let state = { studying: false, startTime: null, timerInterval: null };
-    let editingIndex = null;
-    let wakeLock = null;
+    // ====== 鼓励话术 ======
+    var startMsgs = ["加油！💪","元气满满！☀️","专注当下！🎯","冲冲冲！🚀","又变强了！⚡","干就完了！🔥","你可以的！💪"];
+    var stopMsgs = ["辛苦了！🌟","太棒了！👏","自律最帅！😎","离目标更近了！🎯","每一步都算数！💪","真优秀！⭐","学有所获！📈"];
 
-    // ====== 屏幕常亮 ======
-    async function requestWakeLock() {
-      try {
-        if ('wakeLock' in navigator) {
-          wakeLock = await navigator.wakeLock.request('screen');
-          wakeLock.addEventListener('release', () => { wakeLock = null; });
-          return true;
-        }
-      } catch(e) { /* 静默失败 */ }
-      return false;
-    }
-    async function releaseWakeLock() {
-      if (wakeLock) { try { await wakeLock.release(); } catch(e) {} wakeLock = null; }
-    }
+    // ====== 宠物数据 ======
+    var PETS = {
+      cat: { emoji: "🐱", name: "小猫咪", price: 0, desc: "软萌喵星人" },
+      dog: { emoji: "🐶", name: "小狗狗", price: 50, desc: "忠诚小汪" },
+      rabbit: { emoji: "🐰", name: "小兔子", price: 60, desc: "蹦蹦跳跳" },
+      hamster: { emoji: "🐹", name: "小仓鼠", price: 70, desc: "圆圆滚滚" },
+      panda: { emoji: "🐼", name: "小熊猫", price: 100, desc: "国宝级可爱" },
+      fox: { emoji: "🦊", name: "小狐狸", price: 80, desc: "机灵小狐" },
+      bear: { emoji: "🐻", name: "小熊", price: 90, desc: "温暖抱抱" },
+      penguin: { emoji: "🐧", name: "小企鹅", price: 110, desc: "绅士步伐" },
+      lion: { emoji: "🦁", name: "小狮子", price: 120, desc: "草原之王" },
+      tiger: { emoji: "🐯", name: "小老虎", price: 130, desc: "威猛虎仔" }
+    };
+    var SKINS = {
+      default: { emoji: "", name: "原始", price: 0, desc: "经典造型" },
+      crown: { emoji: "👑", name: "皇冠", price: 30, desc: "王者风范" },
+      hat: { emoji: "🎩", name: "礼帽", price: 25, desc: "绅士气质" },
+      bow: { emoji: "🎀", name: "蝴蝶结", price: 20, desc: "甜美可爱" },
+      scarf: { emoji: "🧣", name: "围巾", price: 35, desc: "温暖过冬" },
+      star: { emoji: "⭐", name: "星星", price: 40, desc: "闪闪发光" },
+      heart: { emoji: "💝", name: "爱心", price: 30, desc: "满满的爱" },
+      flower: { emoji: "🌸", name: "小花", price: 25, desc: "春天气息" }
+    };
+    var STAGE_NAMES = ["🐣 幼崽期", "🌱 成长期", "🌟 成熟期"];
+    var STAGE_XP = [0, 100, 300];
+    var FEED_COST = 5;
+    var FEED_XP = 10;
+    var MAX_FEED_DAY = 5;
+
+    // ====== 状态 ======
+    var state = { studying: false, startTime: null, timerInterval: null };
+    var editingIndex = null;
+    var wakeLock = null;
+    var shopTab = "pets";
+    var calDate = new Date();
 
     // ====== 数据持久化 ======
     function loadSessions() {
-      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e) { return []; }
+      try { return JSON.parse(localStorage.getItem('studySessions')) || []; } catch(e) { return []; }
     }
-    function saveSessions(sessions) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
+    function saveSessions(s) { localStorage.setItem('studySessions', JSON.stringify(s)); }
+    function loadPet() {
+      var d = { currentPet: "cat", coins: 0, xp: 0, feedToday: 0, lastFeedDate: "", ownedPets: ["cat"], ownedSkins: ["default"], currentSkin: "default" };
+      try { var p = JSON.parse(localStorage.getItem('petData')); if (p) return Object.assign(d, p); } catch(e) {}
+      return d;
     }
+    function savePet(p) { localStorage.setItem('petData', JSON.stringify(p)); }
 
     // ====== 格式化 ======
-    function formatDuration(sec) {
-      const h = String(Math.floor(sec / 3600)).padStart(2, '0');
-      const m = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
-      const s = String(sec % 60).padStart(2, '0');
-      return h + ':' + m + ':' + s;
-    }
-    function formatDurationShort(sec) {
-      const h = Math.floor(sec / 3600);
-      const m = Math.floor((sec % 3600) / 60);
-      if (h > 0) return h + '时' + m + '分';
-      return m + '分' + (sec % 60) + '秒';
-    }
-    function formatDateTime(iso) {
-      const d = new Date(iso);
-      const pad = n => String(n).padStart(2, '0');
-      return d.getMonth()+1 + '/' + d.getDate() + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
-    }
-    function isToday(iso) {
-      const d = new Date(iso);
-      const now = new Date();
-      return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
-    }
+    function fmt(s) { var h=Math.floor(s/3600),m=Math.floor((s%3600)/60),sec=s%60; return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0'); }
+    function fmtShort(s) { var h=Math.floor(s/3600),m=Math.floor((s%3600)/60); return h>0?h+'时'+m+'分':m+'分'; }
+    function fmtDate(iso) { var d=new Date(iso); return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+    function isToday(iso) { var d=new Date(iso),n=new Date(); return d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()&&d.getDate()===n.getDate(); }
+    function getDateStr(d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
 
-    // ====== UI 刷新 ======
+    // ====== Timer UI ======
     function updateStats() {
-      const sessions = loadSessions();
-      const todaySessions = sessions.filter(s => isToday(s.start));
-      const totalSec = todaySessions.reduce((sum, s) => sum + (s.duration || 0), 0);
-      document.getElementById('todayCount').textContent = todaySessions.length;
-      document.getElementById('todayDuration').textContent = formatDurationShort(totalSec);
-      document.getElementById('totalCount').textContent = sessions.length;
+      var s=loadSessions(),today=s.filter(function(x){return isToday(x.start)});
+      var sec=today.reduce(function(sm,x){return sm+(x.duration||0)},0);
+      document.getElementById('todayCount').textContent=today.length;
+      document.getElementById('todayDuration').textContent=fmtShort(sec);
+      document.getElementById('totalCount').textContent=s.length;
     }
-
     function renderHistory() {
-      const sessions = loadSessions();
-      const list = document.getElementById('historyList');
-      if (sessions.length === 0) {
-        list.innerHTML = '<div class="empty-msg">还没有学习记录，快开始学习吧！🎯</div>';
-        return;
-      }
-      list.innerHTML = [...sessions].reverse().map((s, i) => {
-        const idx = sessions.length - 1 - i;
-        const dur = s.duration || 0;
-        return '<div class="session-item">' +
-          '<span class="session-date">' + formatDateTime(s.start) + '</span>' +
-          '<span class="session-duration">' + formatDurationShort(dur) + '</span>' +
-          '<div class="session-actions">' +
-            '<button class="icon-btn" onclick="openEditModal(' + idx + ')">✏️</button>' +
-            '<button class="icon-btn icon-btn-danger" onclick="deleteSession(' + idx + ')">✕</button>' +
-          '</div></div>';
+      var s=loadSessions(),list=document.getElementById('historyList');
+      if (!s.length) { list.innerHTML='<div class="empty-msg">还没有学习记录，快开始学习吧！🎯</div>'; return; }
+      list.innerHTML=s.slice().reverse().map(function(x,i){
+        var idx=s.length-1-i,d=x.duration||0;
+        return '<div class="session-item"><span class="session-date">'+fmtDate(x.start)+'</span><span class="session-duration">'+fmtShort(d)+'</span></div>';
       }).join('');
     }
+    function refreshUI() { updateStats(); renderHistory(); renderCalendar(); }
 
-    
-    // ====== 鼓励话术 ======
-    var startMessages = ["加油！💪","新的一轮，冲鸭！🦆","元气满满的一天！☀️","专注当下，你最棒！🎯","学习使我快乐！📚","又是变强的一天！⚡","开始吧！干就完了！🔥","卷起来！🚀","心无旁骛，冲冲冲！💨","行动是最好的答案！✅","开卷有益，冲！📖"];
-    var stopMessages = ["辛苦了！🌟","太棒了！👏","自律的人最帅！😎","离目标又近了一步！🎯","休息一下，你值得的！☕","真棒！继续保持！✨","厉害！奖励自己一下！🎉","每一步都算数！💪","学有所获，真好！📈","今天的努力是明天的底气！🌱","优秀！又进步了！⭐"];
+    // ====== Calendar ======
+    function renderCalendar() {
+      var y=calDate.getFullYear(),m=calDate.getMonth();
+      document.getElementById('calMonth').textContent=y+'年'+(m+1)+'月';
+      var s=loadSessions();
+      var studyDays={}; s.forEach(function(x){ studyDays[getDateStr(new Date(x.start))]=true; });
 
-    function showMsg(elId, msgs, type) {
-      var msg = msgs[Math.floor(Math.random() * msgs.length)];
-      var el = document.getElementById(elId);
-      el.textContent = msg;
-      el.className = 'motivation-msg show ' + type;
-      setTimeout(function() { el.classList.remove('show'); }, 3000);
-    }
+      var grid=document.getElementById('calGrid');
+      var html='<div class="cal-header">日</div><div class="cal-header">一</div><div class="cal-header">二</div><div class="cal-header">三</div><div class="cal-header">四</div><div class="cal-header">五</div><div class="cal-header">六</div>';
+      var first=new Date(y,m,1).getDay();
+      var last=new Date(y,m+1,0).getDate();
+      var today=new Date(),todayStr=getDateStr(today);
+      var studyCount=0;
 
-function refreshUI() {
-      updateStats();
-      renderHistory();
-    }
-
-    // ====== 计时器逻辑 ======
-    async function startStudy() {
-      if (state.studying) return;
-      state.studying = true;
-      state.startTime = new Date();
-      document.getElementById('startBtn').disabled = true;
-      document.getElementById('stopBtn').disabled = false;
-      document.getElementById('statusBadge').textContent = '📖 学习中...';
-      document.getElementById('statusBadge').className = 'status-badge status-studying';
-
-      // 鼓励话术
-      showMsg('motivationMsg', startMessages, 'start');
-
-      // 请求屏幕常亮
-      const hasWakeLock = await requestWakeLock();
-      if (hasWakeLock) {
-        document.getElementById('statusBadge').textContent = '📖 学习中 (屏幕常亮)';
+      for (var i=0;i<first;i++) html+='<div class="cal-day other-month"></div>';
+      for (var d=1;d<=last;d++) {
+        var date=new Date(y,m,d);
+        var ds=getDateStr(date);
+        var cls='cal-day';
+        if (ds===todayStr) cls+=' today';
+        if (ds>todayStr) { html+='<div class="cal-day '+cls+'">'+d+'</div>'; continue; }
+        var dot='';
+        if (studyDays[ds]) { dot='<div class="cal-dot studied"></div>'; studyCount++; }
+        else if (ds<todayStr) { dot='<div class="cal-dot missed"></div>'; }
+        cls+=' day-'+ds;
+        html+='<div class="'+cls+'">'+d+dot+'</div>';
       }
+      grid.innerHTML=html;
+      document.getElementById('calSummary').textContent='本月学习 '+studyCount+' 天，占比 '+Math.round(studyCount/last*100)+'%';
+    }
+    function calPrev() { calDate.setMonth(calDate.getMonth()-1); renderCalendar(); }
+    function calNext() { calDate.setMonth(calDate.getMonth()+1); renderCalendar(); }
 
-      state.timerInterval = setInterval(() => {
-        const elapsed = Math.floor((new Date() - state.startTime) / 1000);
-        document.getElementById('timerDisplay').textContent = formatDuration(elapsed);
-      }, 1000);
+    // ====== Pet ======
+    function renderPet() {
+      var pet=loadPet(),pets=document.getElementById('petEmoji'),pname=document.getElementById('petName'),pstage=document.getElementById('petStage'),pbar=document.getElementById('petBar'),pcoins=document.getElementById('petCoins'),pstat=document.getElementById('petStatus');
+
+      var info=PETS[pet.currentPet]||PETS.cat;
+      var stage=0;
+      for (var i=STAGE_XP.length-1;i>=0;i--) { if (pet.xp>=STAGE_XP[i]) { stage=i; break; } }
+      var nextXp=stage<STAGE_XP.length-1?STAGE_XP[stage+1]:STAGE_XP[stage]+200;
+      var prevXp=STAGE_XP[stage];
+      var pct=Math.min(100,Math.round((pet.xp-prevXp)/(nextXp-prevXp)*100));
+
+      var access=SKINS[pet.currentSkin]||{emoji:''};
+      pets.textContent=info.emoji;
+      pets.className='pet-emoji idle';
+      pname.textContent=info.name;
+      pstage.textContent=STAGE_NAMES[stage];
+      pbar.style.width=pct+'%';
+      pcoins.innerHTML='🪙 '+pet.coins;
+
+      var canFeed=pet.feedToday<MAX_FEED_DAY;
+      pstat.innerHTML=(canFeed?'今日还可喂养 '+(MAX_FEED_DAY-pet.feedToday)+' 次':'今日已喂满！明天再来吧 🌙')+' | XP: '+pet.xp;
     }
 
-    function stopStudy() {
-      if (!state.studying) return;
-      state.studying = false;
-      const endTime = new Date();
-      const duration = Math.floor((endTime - state.startTime) / 1000);
-      clearInterval(state.timerInterval);
-      state.timerInterval = null;
-      releaseWakeLock();
+    function feedPet() {
+      var pet=loadPet();
+      if (pet.coins<FEED_COST) { showPetStatus('金币不够啦！学习赚金币吧 📚',true); return; }
+      if (pet.feedToday>=MAX_FEED_DAY) { showPetStatus('今天已经喂饱了，明天再来吧 🌙',true); return; }
 
-      document.getElementById('startBtn').disabled = false;
-      document.getElementById('stopBtn').disabled = true;
-      document.getElementById('statusBadge').textContent = '⏸ 未开始';
-      document.getElementById('statusBadge').className = 'status-badge status-idle';
+      var today=getDateStr(new Date());
+      if (pet.lastFeedDate!==today) { pet.feedToday=0; pet.lastFeedDate=today; }
+      pet.coins-=FEED_COST;
+      pet.xp+=FEED_XP;
+      pet.feedToday++;
+      savePet(pet);
+      renderPet();
 
-      // 鼓励话术
-      showMsg('motivationMsg', stopMessages, 'stop');
+      var emoji=document.getElementById('petEmoji');
+      emoji.className='pet-emoji bounce';
+      setTimeout(function(){emoji.className='pet-emoji idle';},600);
 
-      const sessions = loadSessions();
-      sessions.push({ start: state.startTime.toISOString(), end: endTime.toISOString(), duration });
-      saveSessions(sessions);
-      state.startTime = null;
-      document.getElementById('timerDisplay').textContent = '00:00:00';
-      refreshUI();
+      showPetStatus('🍼 喂养成功！+'+FEED_XP+'XP',false);
     }
 
-    // ====== 编辑/删除 ======
-    function deleteSession(index) {
-      if (!confirm('确定要删除这条记录吗？')) return;
-      const sessions = loadSessions();
-      sessions.splice(index, 1);
-      saveSessions(sessions);
-      refreshUI();
+    function showPetStatus(msg,isErr) {
+      var el=document.getElementById('petStatus');
+      el.textContent=msg;
+      el.style.color=isErr?'#e74c3c':'#2ecc71';
+      setTimeout(function(){el.textContent='';el.style.color='#999';},2500);
     }
 
-    function openEditModal(index) {
-      editingIndex = index;
-      const sessions = loadSessions();
-      const s = sessions[index];
-      const minutes = Math.round((s.duration || 0) / 60);
-      document.getElementById('editMinutes').value = minutes || '';
-      document.getElementById('editModal').classList.add('active');
-      setTimeout(() => document.getElementById('editMinutes').focus(), 100);
+    // ====== Shop ======
+    function gotoPet(petKey) {
+      var pet=loadPet();
+      if (pet.ownedPets.indexOf(petKey)<0) {
+        var p=PETS[petKey];
+        if (pet.coins<p.price) { alert('金币不够！需要 '+p.price+' 金币'); return; }
+        if (!confirm('花费 '+p.price+' 金币购买 '+p.name+' 吗？')) return;
+        pet.coins-=p.price;
+        pet.ownedPets.push(petKey);
+        savePet(pet);
+      }
+      pet.currentPet=petKey;
+      savePet(pet);
+      renderPet();
+      renderShop();
     }
-    function closeEditModal() {
-      editingIndex = null;
-      document.getElementById('editModal').classList.remove('active');
+
+    function buySkin(skinKey) {
+      var pet=loadPet();
+      if (pet.ownedSkins.indexOf(skinKey)<0) {
+        var s=SKINS[skinKey];
+        if (pet.coins<s.price) { alert('金币不够！需要 '+s.price+' 金币'); return; }
+        if (!confirm('花费 '+s.price+' 金币购买 '+s.name+' 吗？')) return;
+        pet.coins-=s.price;
+        pet.ownedSkins.push(skinKey);
+        savePet(pet);
+      }
+      pet.currentSkin=skinKey;
+      savePet(pet);
+      renderPet();
+      renderShop();
     }
-    function confirmEdit() {
-      const minutes = parseInt(document.getElementById('editMinutes').value);
-      if (isNaN(minutes) || minutes < 1) { alert('请输入有效的分钟数'); return; }
-      const sessions = loadSessions();
-      sessions[editingIndex].duration = minutes * 60;
-      saveSessions(sessions);
-      closeEditModal();
-      refreshUI();
+
+    function renderShop() {
+      var grid=document.getElementById('shopGrid'),pet=loadPet();
+      if (shopTab==='pets') {
+        var items=Object.keys(PETS).map(function(k){
+          var p=PETS[k],owned=pet.ownedPets.indexOf(k)>=0,sel=k===pet.currentPet;
+          var badge=sel?'<div class="badge badge-selected">使用中</div>':owned?'<div class="badge badge-owned">已拥有</div>':'<div class="badge badge-locked">'+p.price+'🪙</div>';
+          var cls='shop-item'+(sel?' selected':'')+(owned?' owned':'');
+          return '<div class="'+cls+'" onclick="gotoPet(''+k+'')"><span class="emoji">'+p.emoji+'</span><div class="name">'+p.name+'</div><div class="price">'+badge+'</div></div>';
+        });
+        grid.innerHTML=items.join('');
+      } else {
+        var items=Object.keys(SKINS).map(function(k){
+          var s=SKINS[k],owned=pet.ownedSkins.indexOf(k)>=0,sel=k===pet.currentSkin;
+          var badge=sel?'<div class="badge badge-selected">使用中</div>':owned?'<div class="badge badge-owned">已拥有</div>':'<div class="badge badge-locked">'+s.price+'🪙</div>';
+          var cls='shop-item'+(sel?' selected':'')+(owned?' owned':'');
+          return '<div class="'+cls+'" onclick="buySkin(''+k+'')"><span class="emoji">'+s.emoji+'</span><div class="name">'+s.name+'</div><div class="price">'+badge+'</div></div>';
+        });
+        grid.innerHTML=items.join('');
+      }
     }
+
+    function openShop() { document.getElementById('shopModal').classList.add('active'); renderShop(); }
+    function closeShop() { document.getElementById('shopModal').classList.remove('active'); }
+
+    // ====== Tab ======
+    function switchTab(t) {
+      document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active');});
+      document.querySelectorAll('.tab-content').forEach(function(c){c.classList.remove('active');});
+      if (t==='timer') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('tabTimer').classList.add('active');
+        refreshUI();
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('tabPet').classList.add('active');
+        renderPet();
+      }
+    }
+
+    // ====== 屏幕常亮 ======
+    async function requestWakeLock() {
+      try { if ('wakeLock' in navigator) { wakeLock=await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release',function(){wakeLock=null;}); return true; } } catch(e){}
+      return false;
+    }
+    async function releaseWakeLock() { if(wakeLock){try{await wakeLock.release()}catch(e){}wakeLock=null;} }
+
+    // ====== 鼓励话术 ======
+    function showMsg(elId,msgs,type){var msg=msgs[Math.floor(Math.random()*msgs.length)],el=document.getElementById(elId);el.textContent=msg;el.className='motivation-msg show '+type;setTimeout(function(){el.classList.remove('show');},3000);}
+
+    // ====== 计时器 ======
+    document.getElementById('startBtn').addEventListener('click',async function(){
+      if(state.studying)return;state.studying=true;state.startTime=new Date();
+      document.getElementById('startBtn').disabled=true;document.getElementById('stopBtn').disabled=false;
+      document.getElementById('statusBadge').textContent='📖 学习中...';
+      document.getElementById('statusBadge').className='status-badge status-studying';
+      showMsg('motivationMsg',startMsgs,'start');
+      var has=await requestWakeLock();if(has)document.getElementById('statusBadge').textContent='📖 学习中 (屏幕常亮)';
+      state.timerInterval=setInterval(function(){
+        var e=Math.floor((new Date()-state.startTime)/1000);
+        document.getElementById('timerDisplay').textContent=fmt(e);
+      },1000);
+    });
+
+    document.getElementById('stopBtn').addEventListener('click',function(){
+      if(!state.studying)return;state.studying=false;
+      var end=new Date(),dur=Math.floor((end-state.startTime)/1000);
+      clearInterval(state.timerInterval);state.timerInterval=null;releaseWakeLock();
+      document.getElementById('startBtn').disabled=false;document.getElementById('stopBtn').disabled=true;
+      document.getElementById('statusBadge').textContent='⏸ 未开始';
+      document.getElementById('statusBadge').className='status-badge status-idle';
+      showMsg('motivationMsg',stopMsgs,'stop');
+      var s=loadSessions();s.push({start:state.startTime.toISOString(),end:end.toISOString(),duration:dur});
+      saveSessions(s);
+
+      // 金币奖励：学习 1 分钟 = 1 金币
+      var pet=loadPet();var coins=Math.floor(dur/60);if(coins>0){pet.coins+=coins;savePet(pet);}
+      state.startTime=null;document.getElementById('timerDisplay').textContent='00:00:00';
+      refreshUI();switchTab('timer');
+    });
+
+    // ====== 编辑 ======
+    function deleteSession(i){if(!confirm('确定删除？'))return;var s=loadSessions();s.splice(i,1);saveSessions(s);refreshUI();}
+    function openEditModal(i){editingIndex=i;var s=loadSessions();document.getElementById('editMinutes').value=Math.round((s[i].duration||0)/60)||'';document.getElementById('editModal').classList.add('active');setTimeout(function(){document.getElementById('editMinutes').focus();},100);}
+    function closeEditModal(){editingIndex=null;document.getElementById('editModal').classList.remove('active');}
+    function confirmEdit(){var m=parseInt(document.getElementById('editMinutes').value);if(isNaN(m)||m<1){alert('请输入有效分钟数');return;}var s=loadSessions();s[editingIndex].duration=m*60;saveSessions(s);closeEditModal();refreshUI();}
+    document.getElementById('editModal').addEventListener('click',function(e){if(e.target===document.getElementById('editModal'))closeEditModal();});
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')closeEditModal();});
+    document.getElementById('editMinutes').addEventListener('keydown',function(e){if(e.key==='Enter')confirmEdit();});
+    document.getElementById('shopModal').addEventListener('click',function(e){if(e.target===document.getElementById('shopModal'))closeShop();});
 
     // ====== 导出 ======
-    function exportData() {
-      const sessions = loadSessions();
-      if (sessions.length === 0) { alert('暂无学习记录可以导出'); return; }
-      let text = '学习记录\n' + '='.repeat(30) + '\n';
-      sessions.forEach((s, i) => {
-        text += (i+1) + '. ' + formatDateTime(s.start) + ' - ' + formatDurationShort(s.duration) + '\n';
-      });
-      const total = sessions.reduce((sum, s) => sum + (s.duration || 0), 0);
-      text += '='.repeat(30) + '\n总计：' + formatDurationShort(total) + '，共' + sessions.length + '次';
-      const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = '学习记录_' + new Date().toISOString().slice(0,10) + '.txt';
-      a.click();
-      URL.revokeObjectURL(a.href);
+    function exportData(){
+      var s=loadSessions();if(!s.length){alert('暂无记录');return;}
+      var t='学习记录\n'+'='.repeat(30)+'\n';s.forEach(function(x,i){t+=(i+1)+'. '+fmtDate(x.start)+' - '+fmtShort(x.duration)+'\n';});
+      var total=s.reduce(function(sm,x){return sm+(x.duration||0)},0);
+      t+='='.repeat(30)+'\n总计：'+fmtShort(total)+'，共'+s.length+'次';
+      var blob=new Blob([t],{type:'text/plain;charset=utf-8'}),a=document.createElement('a');
+      a.href=URL.createObjectURL(blob);a.download='学习记录_'+new Date().toISOString().slice(0,10)+'.txt';a.click();URL.revokeObjectURL(a.href);
     }
 
-    // ====== 事件绑定 ======
-    document.getElementById('startBtn').addEventListener('click', startStudy);
-    document.getElementById('stopBtn').addEventListener('click', stopStudy);
-    document.getElementById('editModal').addEventListener('click', (e) => {
-      if (e.target === document.getElementById('editModal')) closeEditModal();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeEditModal();
-    });
-    document.getElementById('editMinutes').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') confirmEdit();
-    });
-
-    // ====== Service Worker 注册 ======
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('sw.js').catch(() => {});
-    }
+    // ====== Service Worker ======
+    if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 
     // ====== 初始化 ======
     refreshUI();
+    renderPet();
   </script>
 </body>
 </html>
