@@ -49,7 +49,109 @@
       font-size: 56px; font-weight: 700; font-variant-numeric: tabular-nums;
       color: #2c3e50; margin: 12px 0; letter-spacing: 2px;
       font-family: "SF Mono", "Cascadia Code", "Consolas", monospace;
+    }petBounce { 0%,100% { transform: translateY(0); } 30% { transform: translateY(-20px); } 50% { transform: translateY(-25px); } 70% { transform: translateY(-10px); } }
+    @keyframes petFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    .pet-accessory { font-size: 28px; position: absolute; top: 5px; }
+    .pet-name { font-size: 16px; font-weight: 700; color: #2c3e50; margin-top: 4px; }
+    .pet-stage { font-size: 12px; color: #999; }
+    .pet-bar-wrap { background: #f0f0f0; border-radius: 10px; height: 8px; margin: 8px 20px; overflow: hidden; }
+    .pet-bar { height: 100%; border-radius: 10px; transition: width 0.5s; background: linear-gradient(90deg, #fdcb6e, #e17055); }
+    .pet-coins { display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 18px; font-weight: 700; color: #f39c12; margin: 8px 0; }
+    .pet-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+
+    /* ====== Shop ====== */
+    .shop-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+    .shop-item {
+      background: #f8f9fa; border: 2px solid transparent; border-radius: 12px;
+      padding: 12px 8px; text-align: center; cursor: pointer; transition: all 0.2s;
     }
+    .shop-item:hover { border-color: #ddd; }
+    .shop-item.owned { border-color: #2ecc71; background: #f0fff4; }
+    .shop-item.selected { border-color: #0984e3; background: #e8f4fd; }
+    .shop-item .emoji { font-size: 36px; display: block; }
+    .shop-item .name { font-size: 12px; font-weight: 600; color: #333; margin-top: 4px; }
+    .shop-item .price { font-size: 11px; color: #f39c12; margin-top: 2px; }
+    .shop-item .badge { font-size: 10px; padding: 2px 6px; border-radius: 8px; margin-top: 4px; display: inline-block; }
+    .badge-owned { background: #2ecc71; color: white; }
+    .badge-selected { background: #0984e3; color: white; }
+    .badge-locked { background: #ddd; color: #999; }
+
+    /* ====== History ====== */
+    .history-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .history-header h2 { font-size: 16px; color: #2c3e50; }
+    .session-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f0f0; gap: 8px; }
+    .session-item:last-child { border-bottom: none; }
+    .session-date { font-size: 13px; color: #7f8c8d; }
+    .session-duration { font-weight: 600; color: #2c3e50; font-size: 13px; }
+    .empty-msg { text-align: center; color: #95a5a6; padding: 24px 0; font-size: 14px; }
+
+    /* ====== Modal ====== */
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; z-index: 100; padding: 16px; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: white; border-radius: 16px; padding: 24px; width: 100%; max-width: 360px; box-shadow: 0 8px 30px rgba(0,0,0,0.15); }
+    .modal h3 { margin-bottom: 16px; color: #2c3e50; font-size: 18px; }
+    .modal input { width: 100%; padding: 12px 14px; font-size: 16px; border: 1px solid #ddd; border-radius: 10px; margin-bottom: 16px; outline: none; }
+    .modal input:focus { border-color: #3498db; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+    @media (max-width: 480px) {
+      body { padding: 8px; }
+      .timer-display { font-size: 40px; }
+      .btn { padding: 12px 20px; font-size: 14px; min-width: 100px; }
+      .pet-emoji { font-size: 64px; }
+      .shop-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="color:white;text-align:center;font-size:22px;margin-bottom:16px;">📚 学习计时器</h1>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('timer')">⏱ 学习</button>
+      <button class="tab-btn" onclick="switchTab('pet')">🐾 宠物</button>
+    </div>
+
+    <!-- Tab: Timer -->
+    <div class="tab-content active" id="tabTimer">
+      <div class="card timer-card">
+        <div class="status-badge status-idle" id="statusBadge">⏸ 未开始</div>
+        <div class="timer-display" id="timerDisplay">00:00:00</div>
+        <div class="timer-controls">
+          <button class="btn btn-start" id="startBtn" onclick="handleStart()">▶ 开始学习</button>
+          <button class="btn btn-stop" id="stopBtn" onclick="handleStop()">⏹ 结束学习</button>
+        </div>
+        <div class="motivation-msg" id="motivationMsg"></div>
+        <div class="stats">
+          <div class="stat-item"><div class="stat-label">今日次数</div><div class="stat-value" id="todayCount">0</div></div>
+          <div class="stat-item"><div class="stat-label">今日时长</div><div class="stat-value" id="todayDuration">00:00</div></div>
+          <div class="stat-item"><div class="stat-label">总计次数</div><div class="stat-value" id="totalCount">0</div></div>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="card">
+        <div class="cal-nav">
+          <button onclick="calPrev()">◀</button>
+          <span class="month" id="calMonth"></span>
+          <button onclick="calNext()">▶</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend">
+          <span><span class="cal-dot studied"></span> 已学习</span>
+          <span><span class="cal-dot missed"></span> 未学习</span>
+        </div>
+        <div class="cal-summary" id="calSummary"></div>
+      </div>
+
+      <!-- History -->
+      <div class="card">
+        <div class="history-header">
+          <h2>📋 学习记录</h2>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-secondary btn-small" onclick="exportData()">📤 导出</button>
+            <button class="btn btn-secondary btn-small" onclick="if(confirm('确定清空所有记录吗？')){localStorage.removeItem('studySessions');refreshUI();}">�
     .timer-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
     .btn {
       padding: 14px 28px; font-size: 16px; font-weight: 600;
