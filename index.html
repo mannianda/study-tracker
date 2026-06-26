@@ -8,6 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="学习计时器" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#f5f7fa" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
   
   
   <title>学习计时器</title>
@@ -566,6 +568,9 @@
 
     // ====== Service Worker ======
     
+
+    // ====== Service Worker ======
+    if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
 
     // ====== 初始化 ======
     refreshUI();
