@@ -1,35 +1,356 @@
-<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no"><title>学习计时器</title><style>*{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,sans-serif}body{background:linear-gradient(135deg,#667eea,#764ba2);min-height:100vh;padding:12px;color:#333}.container{max-width:480px;margin:0 auto}.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,.08);margin-bottom:16px;text-align:center}.timer{font-size:48px;font-weight:700;color:#2c3e50;margin:12px 0;font-family:monospace}.btn{padding:14px 28px;font-size:16px;font-weight:600;border:none;border-radius:50px;cursor:pointer;min-width:120px}.btn-s{background:#2ecc71;color:#fff}.btn-p{background:#e74c3c;color:#fff}.btn-p:disabled{background:#bdc3c7}.msg{margin-top:12px;font-size:15px;font-weight:600;min-height:24px;opacity:0;transition:opacity .3s}.msg.s{opacity:1}.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.cal-nav .month{font-size:16px;font-weight:700;color:#2c3e50}.cal-nav button{background:none;border:none;font-size:20px;cursor:pointer;padding:4px 12px;color:#666}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}.cal-header{font-size:12px;color:#999;padding:4px 0;font-weight:600}.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:13px}.cal-day.other-month{color:#ddd}.cal-day.today{background:#e8f4fd;font-weight:700}.cal-dot{width:6px;height:6px;border-radius:50%;margin-top:2px}.cal-dot.studied{background:#2ecc71}.cal-dot.missed{background:#e74c3c}.cal-legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:12px;color:#666}.cal-summary{text-align:center;margin-top:8px;font-size:12px;color:#999}</style></head><body><div class=container><h1 style="color:#fff;text-align:center">📚 学习计时器</h1><div class=card><div id=s style="font-size:14px;color:#999">⏸ 未开始</div><div class=timer id=t>00:00:00</div><div><button class="btn btn-s" id=btn1 onclick="hs()">▶ 开始学习</button><button class="btn btn-p" id=btn2 onclick="hp()">⏹ 结束学习</button></div><div class=msg id=m></div>      <div class="card">
-        <div class="cal-nav">
-          <button onclick="cp()">◀</button>
-          <span class="month" id="calMonth"></span>
-          <button onclick="cn()">▶</button>
-        </div>
-        <div class="cal-grid" id="calGrid"></div>
-        <div class="cal-legend">
-          <span><span class="cal-dot studied" style="display:inline-block;vertical-align:middle"></span> 已学习</span>
-          <span><span class="cal-dot missed" style="display:inline-block;vertical-align:middle"></span> 未学习</span>
-        </div>
-        <div class="cal-summary" id="calSummary"></div>
-      </div></div></div><script>var st={a:!1,s:null,i:null};function hs(){if(st.a)return;st.a=!0;st.s=new Date;btn1.disabled=!0;btn2.disabled=!1;s.textContent="📖 学习中...";var r=["加油！💪","元气满满！☀️","冲冲冲！🚀","你可以的！💪"],w=r[Math.random()*r.length|0];m.textContent=w;m.className="msg s";setTimeout(function(){m.className="msg"},3e3);st.i=setInterval(function(){var e=(new Date-st.s)/1e3|0;t.textContent=String(~~(e/3600)).padStart(2,"0")+":"+String(~~(e%3600/60)).padStart(2,"0")+":"+String(e%60).padStart(2,"0")},1e3)}function hp(){if(!st.a)return;st.a=!1;var e=new Date,n=(e-st.s)/1e3|0;clearInterval(st.i);st.i=null;btn1.disabled=!1;btn2.disabled=!0;s.textContent="⏸ 未开始";var r=["辛苦了！🌟","太棒了！👏","自律最帅！😎","每一步都算数！💪"],w=r[Math.random()*r.length|0];m.textContent=w;m.className="msg s";setTimeout(function(){m.className="msg"},3e3);var a=JSON.parse(localStorage.getItem("s"))||[];a.push({start:st.s.toISOString(),end:e.toISOString(),duration:n});localStorage.setItem("s",JSON.stringify(a));st.s=null;t.textContent="00:00:00"}
-var cd=new Date;
-function gd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-function rc(){
-  var y=cd.getFullYear(),m=cd.getMonth();
-  document.getElementById('calMonth').textContent=y+'年'+(m+1)+'月';
-  var s=JSON.parse(localStorage.getItem('s'))||[];
-  var study={};s.forEach(function(x){study[gd(new Date(x.start))]=1});
-  var h='<div class="cal-header">日</div><div class="cal-header">一</div><div class="cal-header">二</div><div class="cal-header">三</div><div class="cal-header">四</div><div class="cal-header">五</div><div class="cal-header">六</div>';
-  var first=new Date(y,m,1).getDay(),last=new Date(y,m+1,0).getDate();
-  var today=new Date(),todayStr=gd(today),studiedCount=0;
-  for(var i=0;i<first;i++)h+='<div class="cal-day other-month"></div>';
-  for(var d=1;d<=last;d++){
-    var date=new Date(y,m,d),ds=gd(date);
-    var cls='cal-day';if(ds===todayStr)cls+=' today';
-    var dot='';if(study[ds]){dot='<div class="cal-dot studied"></div>';studiedCount++}else if(ds!==todayStr&&ds<todayStr){dot='<div class="cal-dot missed"></div>'}
-    h+='<div class="'+cls+'">'+d+dot+'</div>';
-  }
-  document.getElementById('calGrid').innerHTML=h;
-  document.getElementById('calSummary').textContent='本月学习 '+studiedCount+' 天';
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="学习计时">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>学习计时器</title>
+<link rel="apple-touch-icon" href="https://mannianda.github.io/study-tracker/icons/icon-192.png">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;outline:none}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:linear-gradient(135deg,#667eea,#764ba2);min-height:100dvh;padding:12px;color:#333;-webkit-user-select:none;user-select:none}
+.container{max-width:700px;margin:0 auto}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab-btn{flex:1;padding:12px;font-size:15px;font-weight:600;border:none;border-radius:12px;background:rgba(255,255,255,.2);color:rgba(255,255,255,.7);transition:.2s;cursor:pointer;touch-action:manipulation}
+.tab-btn.active{background:#fff;color:#333;box-shadow:0 4px 15px rgba(0,0,0,.1)}
+.tab-content{display:none}
+.tab-content.active{display:block}
+.card{background:#fff;border-radius:16px;padding:20px;box-shadow:0 8px 30px rgba(0,0,0,.08);margin-bottom:16px}
+.timer{font-size:56px;font-weight:700;margin:12px 0;letter-spacing:2px;color:#2c3e50;text-align:center;font-variant-numeric:tabular-nums}
+.btn{padding:14px 28px;font-size:16px;font-weight:600;border:none;border-radius:50px;cursor:pointer;touch-action:manipulation;-webkit-user-select:none}
+.btn:active{transform:scale(.95)}
+.btn1{background:#2ecc71;color:#fff}
+.btn2{background:#e74c3c;color:#fff}
+.btn2:disabled{background:#bdc3c7;cursor:not-allowed}
+.btn-s{background:#ecf0f1;color:#333;padding:8px 14px;font-size:13px}
+.btn-g{background:#f39c12;color:#fff}
+.btn-p{background:#e84393;color:#fff}
+.tc{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.stats{display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap}
+.st{background:#f8f9fa;border-radius:12px;padding:10px 14px;flex:1;max-width:140px;min-width:100px;text-align:center}
+.sl{font-size:12px;color:#7f8c8d}
+.sv{font-size:18px;font-weight:700;color:#2c3e50}
+.msg{font-size:14px;font-weight:600;min-height:24px;opacity:0;transition:.3s;margin-top:8px;text-align:center}
+.msg.show{opacity:1}
+.msg.g{color:#2ecc71}
+.msg.r{color:#e74c3c}
+.cal-nav{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.cal-nav .m{font-size:16px;font-weight:700;color:#2c3e50}
+.cal-nav button{background:none;border:none;font-size:20px;cursor:pointer;padding:4px 12px;color:#666;touch-action:manipulation}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cal-day{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:8px;font-size:13px}
+.cal-day.other{color:#ddd}
+.cal-day.today{background:#e8f4fd;font-weight:700}
+.dot{width:6px;height:6px;border-radius:50%;margin-top:2px}
+.dot.yes{background:#2ecc71}
+.dot.no{background:#e74c3c}
+.cal-legend{display:flex;gap:16px;justify-content:center;margin-top:12px;font-size:12px;color:#666}
+.pet-area{display:flex;flex-direction:column;align-items:center;padding:20px}
+.pet-emoji{font-size:80px;margin:10px 0;transition:.5s;cursor:pointer;user-select:none;-webkit-user-select:none}
+.pet-name{font-size:18px;font-weight:700;color:#2c3e50}
+.pet-info{font-size:14px;color:#7f8c8d;margin:4px 0}
+.pet-exp{background:#f8f9fa;border-radius:12px;padding:12px;width:100%;max-width:300px;margin-top:8px}
+.pet-bar{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-top:4px}
+.pet-bar-inner{height:100%;background:linear-gradient(90deg,#2ecc71,#27ae60);border-radius:4px;transition:width .3s;width:0%}
+.pet-actions{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.shop-item{border-radius:12px;padding:10px;text-align:center;cursor:pointer;transition:.2s;touch-action:manipulation}
+.shop-item.selected{background:#e8f4fd;border:2px solid #0984e3;padding:8px}
+.shop-item.owned{background:#f0f0f0}
+.shop-item .emoji{font-size:32px}
+.shop-item .name{font-size:12px;font-weight:600;margin:4px 0}
+.shop-item .price{font-size:11px;color:#7f8c8d}
+.badge{display:inline-block;padding:2px 8px;border-radius:8px;font-size:10px;font-weight:600}
+.badge-used{background:#d5f5e3;color:#1e8449}
+.badge-owned{background:#0984e3;color:#fff}
+.badge-buy{background:#ecf0f1;color:#999}
+.modal{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:999;align-items:center;justify-content:center;padding:20px}
+.modal.active{display:flex}
+.modal-content{background:#fff;border-radius:16px;padding:20px;max-width:400px;width:100%;max-height:80vh;overflow-y:auto}
+.modal-title{font-size:18px;font-weight:700;color:#2c3e50;margin-bottom:12px}
+.modal-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:12px}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="tabs">
+<button class="tab-btn active" id="tab0btn">⏱ 学习</button>
+<button class="tab-btn" id="tab1btn">🐾 宠物</button>
+</div>
+<div id="tab0" class="tab-content active">
+<div class="card">
+<div class="timer" id="timer">00:00:00</div>
+<div class="tc">
+<button class="btn btn1" id="startBtn">▶ 开始</button>
+<button class="btn btn2" id="stopBtn" disabled>⏹ 结束</button>
+</div>
+<div class="msg" id="msg"></div>
+</div>
+<div class="card">
+<div class="cal-nav"><button id="calPrev">◀</button><span class="m" id="calMonth"></span><button id="calNext">▶</button></div>
+<div class="cal-grid" id="calGrid"></div>
+<div class="cal-legend"><span>🟢已学习</span><span>🔴未学习</span></div>
+</div>
+<div class="card">
+<div class="stats" id="stats"></div>
+</div>
+</div>
+<div id="tab1" class="tab-content">
+<div class="card">
+<div class="pet-area">
+<div class="pet-emoji" id="petEmoji">🐱</div>
+<div class="pet-name" id="petName">小猫</div>
+<div class="pet-info">🪙 <span id="coinCount">0</span> 金币</div>
+<div class="pet-exp">
+<div>经验值 Lv.<span id="petLv">0</span></div>
+<div class="pet-bar"><div class="pet-bar-inner" id="expBar"></div></div>
+</div>
+<div class="pet-actions">
+<button class="btn btn-s" id="feedBtn">🍼 喂食 (10🪙)</button>
+<button class="btn btn-g" id="shopBtn">🛒 商店</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="modal" id="shopModal">
+<div class="modal-content">
+<div class="modal-title">🛒 商店</div>
+<div class="modal-foot">
+<button class="btn btn-s" id="shopPetBtn">🐾 宠物</button>
+<button class="btn btn-s" id="shopSkinBtn">🎨 皮肤</button>
+</div>
+<div class="shop-grid" id="shopGrid"></div>
+<div class="modal-foot"><button class="btn btn-s" id="shopClose">关闭</button></div>
+</div>
+</div>
+<script>
+// Version - change this when updating to bust iOS cache
+var APP_VER = '2.0';
+
+//====== Messages ======
+var MSG = [
+  "加油，你是最棒的💪","开始学习啦，冲鸭🦆","新的学习，新的收获📚",
+  "今天也要努力哦✨","学习使我快乐😊","专注当下，未来可期🌟"],
+  ["辛苦了，好好休息😊","太棒了，今天又进步🎉","真厉害，继续保持👍",
+  "完美学习，晚安🌙","学习结束，奖励自己吧🎁"]
+];
+
+//====== Pet Data ======
+var PETS = {
+  cat:{n:"小猫",e:"🐱",p:0}, dog:{n:"小狗",e:"🐶",p:50},
+  rabbit:{n:"小兔",e:"🐰",p:80}, bear:{n:"小熊",e:"🐻",p:100},
+  panda:{n:"熊猫",e:"🐼",p:150}, fox:{n:"狐狸",e:"🦊",p:120},
+  lion:{n:"狮子",e:"🦁",p:200}, tiger:{n:"老虎",e:"🐯",p:200},
+  monkey:{n:"猴子",e:"🐵",p:130}, pig:{n:"小猪",e:"🐷",p:90},
+  frog:{n:"青蛙",e:"🐸",p:60}, chick:{n:"小鸡",e:"🐤",p:40},
+  penguin:{n:"企鹅",e:"🐧",p:110}, owl:{n:"猫头鹰",e:"🦉",p:140},
+  unicorn:{n:"独角兽",e:"🦄",p:250}, dragon:{n:"小龙",e:"🐲",p:300}
+};
+var SKINS = {
+  d:{n:"默认",e:"🐱",p:0}, g:{n:"金色",e:"🦁",p:100},
+  s:{n:"星空",e:"🌌",p:150}, r:{n:"彩虹",e:"🌈",p:200},
+  h:{n:"爱心",e:"❤️",p:80}, f:{n:"火焰",e:"🔥",p:120},
+  cr:{n:"皇冠",e:"👑",p:180}, w:{n:"翅膀",e:"🕊️",p:140},
+  m:{n:"月亮",e:"🌙",p:90}, st:{n:"星星",e:"⭐",p:110},
+  su:{n:"太阳",e:"☀️",p:130}, cl:{n:"云朵",e:"☁️",p:70}
+};
+
+//====== Storage ======
+function load(k,d){try{var v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+
+var sess = load('s',[]);
+var pet = load('p',{pet:'cat',coins:0,exp:0,lv:0,skins:['d'],curSkin:'d'});
+
+function saveSess(){save('s',sess)}
+function savePet(){save('p',pet)}
+
+//====== Tab Switching ======
+function switchTab(i){
+  document.getElementById('tab0btn').classList.toggle('active',i===0);
+  document.getElementById('tab1btn').classList.toggle('active',i===1);
+  document.getElementById('tab0').classList.toggle('active',i===0);
+  document.getElementById('tab1').classList.toggle('active',i===1);
+  if(i===0){updateStats();renderCal()}
+  if(i===1){renderPet()}
 }
-function cp(){cd.setMonth(cd.getMonth()-1);rc()}
-function cn(){cd.setMonth(cd.getMonth()+1);rc()}rc();</script></body></html>
+
+//====== Timer ======
+var timerInt, isRunning=0, secs=0;
+function fmtTime(s){
+  var h=Math.floor(s/3600), m=Math.floor(s%3600/60), sec=s%60;
+  return String(h).padStart(2,'0')+':'+String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+}
+function fmtDur(s){
+  var h=Math.floor(s/3600), m=Math.floor(s%3600/60), sec=s%60;
+  return (h?h+'时':'')+m+'分'+sec+'秒';
+}
+function fmtDate(d){var t=new Date(d);return t.getFullYear()+'-'+String(t.getMonth()+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0')}
+function showMsg(isEnd){
+  var arr=MSG[isEnd?1:0], msg=arr[Math.floor(Math.random()*arr.length)];
+  var el=document.getElementById('msg');
+  el.textContent=msg; el.className='msg show '+(isEnd?'r':'g');
+  setTimeout(function(){el.classList.remove('show')},3000);
+}
+function startStudy(){
+  if(isRunning) return;
+  isRunning=1; secs=0;
+  document.getElementById('startBtn').disabled=true;
+  document.getElementById('stopBtn').disabled=false;
+  document.getElementById('timer').textContent='00:00:00';
+  timerInt=setInterval(function(){
+    secs++; 
+    document.getElementById('timer').textContent=fmtTime(secs);
+  },1000);
+  showMsg(0);
+  // Try to keep screen awake
+  try{if(navigator.wakeLock)navigator.wakeLock.request('screen').catch(function(){})}catch(e){}
+}
+function stopStudy(){
+  if(!isRunning) return;
+  isRunning=0; clearInterval(timerInt);
+  document.getElementById('startBtn').disabled=false;
+  document.getElementById('stopBtn').disabled=true;
+  showMsg(1);
+  try{if(navigator.wakeLock)navigator.wakeLock.release().catch(function(){})}catch(e){}
+  var now=new Date();
+  sess.push({s:new Date(now-secs*1000).toISOString(),e:now.toISOString(),d:secs});
+  saveSess();
+  // Award coins: 1 coin per 30 seconds
+  var earned=Math.floor(secs/30);
+  if(earned>0){pet.coins+=earned;savePet();renderPet()}
+  secs=0; document.getElementById('timer').textContent='00:00:00';
+  updateStats(); renderCal();
+}
+
+//====== Calendar ======
+var calYear=new Date().getFullYear(), calMonth=new Date().getMonth();
+function calPrev(){calMonth--;if(calMonth<0){calMonth=11;calYear--}renderCal()}
+function calNext(){calMonth++;if(calMonth>11){calMonth=0;calYear++}renderCal()}
+function renderCal(){
+  var d=new Date(calYear,calMonth,1), lastDay=new Date(calYear,calMonth+1,0).getDate();
+  var firstDow=d.getDay(), html='';
+  if(firstDow) for(var i=0;i<firstDow;i++) html+='<div class="cal-day other"></div>';
+  for(var i=1;i<=lastDay;i++){
+    var dt=calYear+'-'+String(calMonth+1).padStart(2,'0')+'-'+String(i).padStart(2,'0');
+    var isToday=(dt===fmtDate(new Date()));
+    var studied=sess.some(function(x){return fmtDate(x.s)===dt});
+    html+='<div class="cal-day'+(isToday?' today':'')+'">'+i+'<div class="dot '+(studied?'yes':'no')+'"></div></div>';
+  }
+  document.getElementById('calGrid').innerHTML=html;
+  document.getElementById('calMonth').textContent=calYear+'年'+(calMonth+1)+'月';
+}
+function updateStats(){
+  var total=sess.reduce(function(s,x){return s+(x.d||0)},0);
+  var count=sess.length;
+  var today=sess.filter(function(x){return fmtDate(x.s)===fmtDate(new Date())}).reduce(function(s,x){return s+(x.d||0)},0);
+  document.getElementById('stats').innerHTML=
+    '<div class="st"><div class="sl">今日</div><div class="sv">'+fmtDur(today)+'</div></div>'+
+    '<div class="st"><div class="sl">总计</div><div class="sv">'+fmtDur(total)+'</div></div>'+
+    '<div class="st"><div class="sl">次数</div><div class="sv">'+count+'次</div></div>';
+}
+
+//====== Pet ======
+function renderPet(){
+  var p=PETS[pet.pet]||PETS.cat;
+  var k=SKINS[pet.curSkin]||SKINS.d;
+  document.getElementById('petEmoji').textContent=k.e;
+  document.getElementById('petName').textContent=p.n;
+  document.getElementById('coinCount').textContent=pet.coins;
+  document.getElementById('petLv').textContent=pet.lv;
+  var maxExp=100*Math.pow(2,pet.lv);
+  document.getElementById('expBar').style.width=Math.min(100,pet.exp/maxExp*100)+'%';
+}
+function feedPet(){
+  if(pet.coins<10){alert('金币不足，需要10🪙');return}
+  pet.coins-=10;
+  pet.exp+=Math.floor(Math.random()*5)+5;
+  var maxExp=100*Math.pow(2,pet.lv);
+  if(pet.exp>=maxExp){pet.exp=0;pet.lv++;alert('🎉 升级了！现在 Lv.'+pet.lv)}
+  savePet(); renderPet();
+}
+function bouncePet(){
+  var el=document.getElementById('petEmoji');
+  el.style.transform='scale(1.3)';
+  setTimeout(function(){el.style.transform='scale(1)'},300);
+}
+
+//====== Shop ======
+var shopTab='p';
+function openShop(){document.getElementById('shopModal').classList.add('active');renderShop()}
+function closeShop(){document.getElementById('shopModal').classList.remove('active')}
+function renderShop(){
+  var items=shopTab==='p'?PETS:SKINS;
+  var html='';
+  Object.keys(items).forEach(function(k){
+    var item=items[k];
+    var isCurrent=shopTab==='p'?pet.pet===k:pet.curSkin===k;
+    var isOwned=shopTab==='p'?true:pet.skins.indexOf(k)>=0;
+    if(shopTab==='p') isOwned=(pet.pet===k)||pet.skins.indexOf(k)>=0;
+    var badge=isCurrent?'<span class="badge badge-used">使用中</span>':
+      isOwned?'<span class="badge badge-owned">已拥有</span>':
+      '<span class="badge badge-buy">'+item.p+'🪙</span>';
+    var cls='shop-item'+(isCurrent?' selected':'')+(isOwned?' owned':'');
+    html+='<div class="'+cls+'" data-k="'+k+'" data-t="'+shopTab+'">'+
+      '<div class="emoji">'+item.e+'</div><div class="name">'+item.n+'</div><div class="price">'+badge+'</div></div>';
+  });
+  document.getElementById('shopGrid').innerHTML=html;
+  document.querySelectorAll('#shopGrid .shop-item').forEach(function(el){
+    el.addEventListener('click',function(){
+      var k=this.getAttribute('data-k'), t=this.getAttribute('data-t');
+      if(t==='p') buyPet(k); else buySkin(k);
+    });
+  });
+}
+function buyPet(k){
+  var item=PETS[k];
+  if(pet.pet===k){closeShop();return}
+  if(pet.skins.indexOf(k)>=0){pet.pet=k;savePet();renderPet();closeShop();return}
+  if(pet.coins<item.p){alert('金币不足');return}
+  pet.coins-=item.p;
+  if(pet.skins.indexOf(k)<0) pet.skins.push(k);
+  pet.pet=k; savePet(); renderPet(); closeShop();
+}
+function buySkin(k){
+  var item=SKINS[k];
+  if(pet.curSkin===k){closeShop();return}
+  if(pet.skins.indexOf(k)>=0){pet.curSkin=k;savePet();renderPet();closeShop();return}
+  if(pet.coins<item.p){alert('金币不足');return}
+  pet.coins-=item.p; pet.skins.push(k); pet.curSkin=k;
+  savePet(); renderPet(); closeShop();
+}
+
+//====== Event Binding ======
+function init(){
+  // Tabs
+  document.getElementById('tab0btn').addEventListener('click',function(){switchTab(0)});
+  document.getElementById('tab1btn').addEventListener('click',function(){switchTab(1)});
+  // Timer
+  document.getElementById('startBtn').addEventListener('click',startStudy);
+  document.getElementById('stopBtn').addEventListener('click',stopStudy);
+  // Calendar
+  document.getElementById('calPrev').addEventListener('click',calPrev);
+  document.getElementById('calNext').addEventListener('click',calNext);
+  // Pet
+  document.getElementById('feedBtn').addEventListener('click',feedPet);
+  document.getElementById('shopBtn').addEventListener('click',openShop);
+  document.getElementById('petEmoji').addEventListener('click',bouncePet);
+  // Shop
+  document.getElementById('shopPetBtn').addEventListener('click',function(){shopTab='p';renderShop()});
+  document.getElementById('shopSkinBtn').addEventListener('click',function(){shopTab='k';renderShop()});
+  document.getElementById('shopClose').addEventListener('click',closeShop);
+  // Render
+  updateStats(); renderCal(); renderPet();
+}
+document.addEventListener('DOMContentLoaded',init);
+// Fallback for iOS which sometimes doesn't fire DOMContentLoaded on home screen
+if(document.readyState==='complete'||document.readyState==='interactive'){init()}
+</script>
+</body>
+</html>
