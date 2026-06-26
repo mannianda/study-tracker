@@ -8,8 +8,8 @@
   <meta name="apple-mobile-web-app-title" content="学习计时器" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="theme-color" content="#f5f7fa" />
-  <link rel="manifest" href="manifest.json" />
-  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  
+  
   <title>学习计时器</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -555,7 +555,7 @@
     var savedVer = localStorage.getItem('appVersion');
     if (savedVer && savedVer !== APP_VER) {
       // 新版上线，清除旧缓存
-      if ('serviceWorker' in navigator) {
+      if ('caches' in window) {
         caches.keys().then(function(ks) { ks.forEach(function(k) { caches.delete(k); }); });
       }
       localStorage.setItem('appVersion', APP_VER);
@@ -565,7 +565,7 @@
     }
 
     // ====== Service Worker ======
-    if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(function(){});
+    
 
     // ====== 初始化 ======
     refreshUI();
