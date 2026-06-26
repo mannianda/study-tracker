@@ -100,7 +100,263 @@
       .btn { padding: 12px 20px; font-size: 14px; min-width: 100px; }
       .pet-emoji { font-size: 64px; }
       .shop-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="学习计时器" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="theme-color" content="#f5f7fa" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  
+  
+  <title>学习计时器</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh; min-height: 100dvh;
+      padding: 12px;
+      color: #333;
+      overscroll-behavior: none;
     }
+    .container { max-width: 700px; margin: 0 auto; }
+
+    /* ====== Tabs ====== */
+    .tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .tab-btn {
+      flex: 1; padding: 12px; font-size: 15px; font-weight: 600;
+      border: none; border-radius: 12px; cursor: pointer;
+      background: rgba(255,255,255,0.2); color: rgba(255,255,255,0.7);
+      transition: all 0.2s; touch-action: manipulation;
+    }
+    .tab-btn.active { background: white; color: #333; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ====== Card ====== */
+    .card {
+      background: white; border-radius: 16px; padding: 20px;
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08); margin-bottom: 16px;
+    }
+
+    /* ====== Timer ====== */
+    .timer-card { text-align: center; }
+    .timer-display {
+      font-size: 56px; font-weight: 700; font-variant-numeric: tabular-nums;
+      color: #2c3e50; margin: 12px 0; letter-spacing: 2px;
+      font-family: "SF Mono", "Cascadia Code", "Consolas", monospace;
+    }
+    .timer-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 14px 28px; font-size: 16px; font-weight: 600;
+      border: none; border-radius: 50px; cursor: pointer;
+      transition: transform 0.15s; min-width: 130px;
+      touch-action: manipulation; user-select: none;
+    }
+    .btn:active { transform: scale(0.95); }
+    .btn-start { background: #2ecc71; color: white; }
+    .btn-stop { background: #e74c3c; color: white; }
+    .btn-stop:disabled { background: #bdc3c7; cursor: not-allowed; }
+    .btn-secondary { background: #ecf0f1; color: #333; }
+    .btn-small { padding: 8px 14px; font-size: 13px; min-width: auto; }
+    .btn-gold { background: #f39c12; color: white; }
+    .btn-pink { background: #e84393; color: white; }
+    .btn-blue { background: #0984e3; color: white; }
+    .stats { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+    .stat-item { background: #f8f9fa; border-radius: 12px; padding: 10px 16px; flex: 1; max-width: 160px; }
+    .stat-label { font-size: 12px; color: #7f8c8d; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #2c3e50; }
+    .status-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 8px; }
+    .status-studying { background: #d5f5e3; color: #1e8449; }
+    .status-idle { background: #f0f0f0; color: #7f8c8d; }
+    .motivation-msg { margin-top: 12px; font-size: 15px; font-weight: 600; min-height: 24px; transition: opacity 0.3s; opacity: 0; }
+    .motivation-msg.show { opacity: 1; }
+    .motivation-msg.start { color: #2ecc71; }
+    .motivation-msg.stop { color: #e74c3c; }
+
+    /* ====== Calendar ====== */
+    .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .cal-nav .month { font-size: 16px; font-weight: 700; color: #2c3e50; }
+    .cal-nav button { background: none; border: none; font-size: 20px; cursor: pointer; padding: 4px 12px; color: #666; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; }
+    .cal-header { font-size: 12px; color: #999; padding: 4px 0; font-weight: 600; }
+    .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: centt: flex-end; }
+
+    @media (max-width: 480px) {
+      body { padding: 8px; }
+      .timer-display { font-size: 40px; }
+      .btn { padding: 12px 20px; font-size: 14px; min-width: 100px; }
+      .pet-emoji { font-size: 64px; }
+      .shop-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="color:white;text-align:center;font-size:22px;margin-bottom:16px;">📚 学习计时器</h1>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('timer')">⏱ 学习</button>
+      <button class="tab-btn" onclick="switchTab('pet')">🐾 宠物</button>
+    </div>
+
+    <!-- Tab: Timer -->
+    <div class="tab-content active" id="tabTimer">
+      <div class="card timer-card">
+        <div class="status-badge status-idle" id="statusBadge">⏸ 未开始</div>
+        <div class="timer-display" id="timerDisplay">00:00:00</div>
+        <div class="timer-controls">
+          <button class="btn btn-start" id="startBtn" onclick="handleStart()">▶ 开始学习</button>
+          <button class="btn btn-stop" id="stopBtn" onclick="handleStop()">⏹ 结束学习</button>
+        </div>
+        <div class="motivation-msg" id="motivationMsg"></div>
+        <div class="stats">
+          <div class="stat-item"><div class="stat-label">今日次数</div><div class="stat-value" id="todayCount">0</div></div>
+          <div class="stat-item"><div class="stat-label">今日时长</div><div class="stat-value" id="todayDuration">00:00</div></div>
+          <div class="stat-item"><div class="stat-label">总计次数</div><div class="stat-value" id="totalCount">0</div></div>
+        </div>
+      </div>
+
+      <!-- Calendar -->
+      <div class="card">
+        <div class="cal-nav">
+          <button onclick="calPrev()">◀</button>
+          <span class="month" id="calMonth"></span>
+          <button onclick="calNext()">▶</button>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+        <div class="cal-legend">
+          <span><span class="cal-dot studied"></span> 已学习</span>
+          <span><span class="cal-dot missed"></span> 未学习</span>
+        </div>
+        <div class="cal-summary" id="calSummary"></div>
+      </div>
+
+      <!-- History -->
+      <div class="card">
+        <div class="history-header">
+          <h2>📋 学习记录</h2>
+          <div style="display:flex;gap:6px;">
+            <button class="btn btn-secondary btn-small" onclick="exportData()">📤 导出</button>
+            <button class="btn btn-secondary btn-small" onclick="if(confirm('确定清空所有记录吗？')){localStorage.removeItem('studySessions');refreshUI();}">🗑 清空</button>
+          </div>
+        </div>
+        <div id="historyList"><div class="empty-msg">还没有学习记录，快开始学习吧！🎯</div></div>
+      </div>
+    </div>
+
+    <!-- Tab: Pet -->
+    <div class="tab-content" id="tabPet">
+      <div class="card pet-area">
+        <div class="pet-emoji idle" id="petEmoji">🐱</div>
+        <div class="pet-name" id="petName">小猫咪</div>
+        <div class="pet-stage" id="petStage">🐣 幼崽期</div>
+        <div class="pet-bar-wrap"><div class="pet-bar" id="petBar" style="width:0%"></div></div>
+        <div class="pet-coins" id="petCoins">🪙 0</div>
+        <div class="pet-actions">
+          <button class="btn btn-gold btn-small" onclick="feedPet()">🍼 喂养 (+10XP)</button>
+          <button class="btn btn-pink btn-small" onclick="openShop()">🎀 商店</button>
+        </div>
+        <div id="petStatus" style="font-size:13px;color:#999;margin-top:8px;min-height:20px;"></div>
+      </div>
+
+      <div class="card" style="text-align:center;">
+        <div style="font-size:14px;color:#666;margin-bottom:8px;">💡 学习 1 分钟 = 🪙 1 金币</div>
+        <div style="font-size:13px;color:#999;">喂养宠物让它长大，攒金币买新皮肤！</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Shop Modal -->
+  <div class="modal-overlay" id="shopModal" onclick="if(event.target===this)closeShop()">
+    <div class="modal">
+      <h3>🎀 宠物商店</h3>
+      <div style="margin-bottom:12px;display:flex;gap:8px;">
+        <button class="btn btn-small btn-secondary" onclick="shopTab='pets';renderShop()">🐾 宠物</button>
+        <button class="btn btn-small btn-secondary" onclick="shopTab='skins';renderShop()">🎭 皮肤</button>
+      </div>
+      <div class="shop-grid" id="shopGrid"></div>
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn btn-secondary btn-small" onclick="closeShop()">关闭</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Modal - v3 -->
+  <div class="modal-overlay" id="editModal" onclick="if(event.target===this)closeEditModal()">
+    <div class="modal">
+      <h3>✏️ 编辑时长</h3>
+      <input type="number" id="editMinutes" placeholder="分钟数" min="1" onkeydown="if(event.key==='Enter')confirmEdit()" />
+      <div class="modal-actions">
+        <button class="btn btn-secondary btn-small" onclick="closeEditModal()">取消</button>
+        <button class="btn btn-start btn-small" onclick="confirmEdit()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ====== 鼓励话术 ======
+    var startMsgs = ["加油！💪","元气满满！☀️","专注当下！🎯","冲冲冲！🚀","又变强了！⚡","干就完了！🔥","你可以的！💪"];
+    var stopMsgs = ["辛苦了！🌟","太棒了！👏","自律最帅！😎","离目标更近了！🎯","每一步都算数！💪","真优秀！⭐","学有所获！📈"];
+
+    // ====== 宠物数据 ======
+    var PETS = {
+      cat: { emoji: "🐱", name: "小猫咪", price: 0, desc: "软萌喵星人" },
+      dog: { emoji: "🐶", name: "小狗狗", price: 50, desc: "忠诚小汪" },
+      rabbit: { emoji: "🐰", name: "小兔子", price: 60, desc: "蹦蹦跳跳" },
+      hamster: { emoji: "🐹", name: "小仓鼠", price: 70, desc: "圆圆滚滚" },
+      panda: { emoji: "🐼", name: "小熊猫", price: 100, desc: "国宝级可爱" },
+      fox: { emoji: "🦊", name: "小狐狸", price: 80, desc: "机灵小狐" },
+      bear: { emoji: "🐻", name: "小熊", price: 90, desc: "温暖抱抱" },
+      penguin: { emoji: "🐧", name: "小企鹅", price: 110, desc: "绅士步伐" },
+      lion: { emoji: "🦁", name: "小狮子", price: 120, desc: "草原之王" },
+      tiger: { emoji: "🐯", name: "小老虎", price: 130, desc: "威猛虎仔" }
+    };
+    var SKINS = {
+      default: { emoji: "", name: "原始", price: 0, desc: "经典造型" },
+      crown: { emoji: "👑", name: "皇冠", price: 30, desc: "王者风范" },
+      hat: { emoji: "🎩", name: "礼帽", price: 25, desc: "绅士气质" },
+      bow: { emoji: "🎀", name: "蝴蝶结", price: 20, desc: "甜美可爱" },
+      scarf: { emoji: "🧣", name: "围巾", price: 35, desc: "温暖过冬" },
+      star: { emoji: "⭐", name: "星星", price: 40, desc: "闪闪发光" },
+      heart: { emoji: "💝", name: "爱心", price: 30, desc: "满满的爱" },
+      flower: { emoji: "🌸", name: "小花", price: 25, desc: "春天气息" }
+    };
+    var STAGE_NAMES = ["🐣 幼崽期", "🌱 成长期", "🌟 成熟期"];
+    var STAGE_XP = [0, 100, 300];
+    var FEED_COST = 5;
+    var FEED_XP = 10;
+    var MAX_FEED_DAY = 5;
+
+    // ====== 状态 ======
+    var state = { studying: false, startTime: null, timerInterval: null };
+    var editingIndex = null;
+
+    function handleStart(){if(state.studying)return;state.studying=true;state.startTime=new Date();
+      document.getElementById('startBtn').disabled=true;document.getElementById('stopBtn').disabled=false;
+      document.getElementById('statusBadge').textContent='📖 学习中...';
+      document.getElementById('statusBadge').className='status-badge status-studying';
+      showMsg('motivationMsg',startMsgs,'start');
+      requestWakeLock().then(function(has){if(has)document.getElementById('statusBadge').textContent='📖 学习中 (屏幕常亮)';});
+      state.timerInterval=setInterval(function(){
+        var e=Math.floor((new Date()-state.startTime)/1000);
+        document.getElementById('timerDisplay').textContent=fmt(e);
+      },1000);
+    }
+    function handleStop(){if(!state.studying)return;state.studying=false;
+      var end=new Date(),dur=Math.floor((end-state.startTime)/1000);
+      clearInterval(state.timerInterval);state.timerInterval=null;releaseWakeLock();
+      document.getElementById('startBtn').disabled=false;document.getElementById('stopBtn').disabled=true;
+      document.getElementById('statusBadge').textContent='⏸ 未开始';
+      document.getElementById('statusBadge').className='status-badge status-idle';
+   }
   </style>
 </head>
 <body>
