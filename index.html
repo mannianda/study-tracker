@@ -99,6 +99,14 @@
     }
     .status-studying { background: #d5f5e3; color: #1e8449; }
     .status-idle { background: #f0f0f0; color: #7f8c8d; }
+    .motivation-msg {
+      margin-top: 12px; font-size: 15px; font-weight: 600;
+      min-height: 24px; transition: opacity 0.3s;
+      opacity: 0;
+    }
+    .motivation-msg.show { opacity: 1; }
+    .motivation-msg.start { color: #2ecc71; }
+    .motivation-msg.stop { color: #e74c3c; }
     .status-wake-lock { background: #fef9e7; color: #7d6608; }
 
     .modal-overlay {
@@ -140,6 +148,7 @@
     <div class="timer-card">
       <div class="timer-display" id="timerDisplay">00:00:00</div>
       <div id="statusBadge" class="status-badge status-idle">⏸ 未开始</div>
+      <div id="motivationMsg" class="motivation-msg"></div>
       <div style="margin-top:16px;">
         <button class="btn btn-start" id="startBtn">▶ 开始学习</button>
         <button class="btn btn-stop" id="stopBtn" disabled>⏹ 结束学习</button>
@@ -270,7 +279,20 @@
       }).join('');
     }
 
-    function refreshUI() {
+    
+    // ====== 鼓励话术 ======
+    var startMessages = ["加油！💪","新的一轮，冲鸭！🦆","元气满满的一天！☀️","专注当下，你最棒！🎯","学习使我快乐！📚","又是变强的一天！⚡","开始吧！干就完了！🔥","卷起来！🚀","心无旁骛，冲冲冲！💨","行动是最好的答案！✅","开卷有益，冲！📖"];
+    var stopMessages = ["辛苦了！🌟","太棒了！👏","自律的人最帅！😎","离目标又近了一步！🎯","休息一下，你值得的！☕","真棒！继续保持！✨","厉害！奖励自己一下！🎉","每一步都算数！💪","学有所获，真好！📈","今天的努力是明天的底气！🌱","优秀！又进步了！⭐"];
+
+    function showMsg(elId, msgs, type) {
+      var msg = msgs[Math.floor(Math.random() * msgs.length)];
+      var el = document.getElementById(elId);
+      el.textContent = msg;
+      el.className = 'motivation-msg show ' + type;
+      setTimeout(function() { el.classList.remove('show'); }, 3000);
+    }
+
+function refreshUI() {
       updateStats();
       renderHistory();
     }
@@ -284,6 +306,9 @@
       document.getElementById('stopBtn').disabled = false;
       document.getElementById('statusBadge').textContent = '📖 学习中...';
       document.getElementById('statusBadge').className = 'status-badge status-studying';
+
+      // 鼓励话术
+      showMsg('motivationMsg', startMessages, 'start');
 
       // 请求屏幕常亮
       const hasWakeLock = await requestWakeLock();
@@ -310,6 +335,9 @@
       document.getElementById('stopBtn').disabled = true;
       document.getElementById('statusBadge').textContent = '⏸ 未开始';
       document.getElementById('statusBadge').className = 'status-badge status-idle';
+
+      // 鼓励话术
+      showMsg('motivationMsg', stopMessages, 'stop');
 
       const sessions = loadSessions();
       sessions.push({ start: state.startTime.toISOString(), end: endTime.toISOString(), duration });
