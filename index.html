@@ -228,7 +228,40 @@
       <div class="card">
         <div class="cal-nav">
           <button onclick="calPrev()">◀</button>
-          <span class="month" id="calMonth"></span>
+          <span class="month" id="calMonth"></span>font-variant-numeric: tabular-nums;
+      color: #2c3e50; margin: 12px 0; letter-spacing: 2px;
+      font-family: "SF Mono", "Cascadia Code", "Consolas", monospace;
+    }
+    .timer-controls { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      padding: 14px 28px; font-size: 16px; font-weight: 600;
+      border: none; border-radius: 50px; cursor: pointer;
+      transition: transform 0.15s; min-width: 130px;
+      touch-action: manipulation; user-select: none;
+    }
+    .btn:active { transform: scale(0.95); }
+    .btn-start { background: #2ecc71; color: white; }
+    .btn-stop { background: #e74c3c; color: white; }
+    .btn-stop:disabled { background: #bdc3c7; cursor: not-allowed; }
+    .btn-secondary { background: #ecf0f1; color: #333; }
+    .btn-small { padding: 8px 14px; font-size: 13px; min-width: auto; }
+    .btn-gold { background: #f39c12; color: white; }
+    .btn-pink { background: #e84393; color: white; }
+    .btn-blue { background: #0984e3; color: white; }
+    .stats { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+    .stat-item { background: #f8f9fa; border-radius: 12px; padding: 10px 16px; flex: 1; max-width: 160px; }
+    .stat-label { font-size: 12px; color: #7f8c8d; }
+    .stat-value { font-size: 20px; font-weight: 700; color: #2c3e50; }
+    .status-badge { display: inline-block; padding: 4px 14px; border-radius: 20px; font-size: 13px; font-weight: 600; margin-top: 8px; }
+    .status-studying { background: #d5f5e3; color: #1e8449; }
+    .status-idle { background: #f0f0f0; color: #7f8c8d; }
+    .motivation-msg { margin-top: 12px; font-size: 15px; font-weight: 600; min-height: 24px; transition: opacity 0.3s; opacity: 0; }
+    .motivation-msg.show { opacity: 1; }
+    .motivation-msg.start { color: #2ecc71; }
+    .motivation-msg.stop { color: #e74c3c; }
+
+    /* ====== Calendar ====== */
+    .cal-nav { display: flex; justify-content: space-between; align-items: center;
           <button onclick="calNext()">▶</button>
         </div>
         <div class="cal-grid" id="calGrid"></div>
